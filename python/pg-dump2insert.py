@@ -6,6 +6,7 @@ start_table_pattern = re.compile("^COPY (.+) \((.+)\) FROM stdin;")
 table_name = None
 fields = None
 insert_mode = False
+f = open("converted.sql","w+")
 
 for line in fileinput.input():
     if insert_mode:
@@ -16,7 +17,7 @@ for line in fileinput.input():
             v == "\\N" and "NULL" or "'%s'" % v
             for v in line[:-1].replace("'", "''").split("\t")
         ]
-        print(
+        f.write(
             "INSERT INTO %s (%s) VALUES (%s);" % (table_name, fields, ", ".join(values))
         )
     else:

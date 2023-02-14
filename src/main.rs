@@ -1,9 +1,11 @@
 use std::io;
 use std::io::prelude::*;
 extern crate regex;
+use std::fs::File;
 use regex::Regex;
 
 fn main() {
+    let mut file = File::create("converted.sql").expect("Error encountered while creating file!");
     let stdin = io::stdin();
     let mut stdin = stdin.lock();
     let mut line = String::new();
@@ -29,10 +31,7 @@ fn main() {
                 }
                 values.pop();
                 values.pop();
-                println!(
-                    "INSERT INTO {} ({}) VALUES ({});",
-                    table_name, fields, values
-                );
+                file.write(format!("INSERT INTO {} ({}) VALUES ({});\n", table_name, fields, values).to_owned().as_bytes());
             }
         } else {
             match re.captures(&line) {
